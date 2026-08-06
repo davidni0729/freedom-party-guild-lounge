@@ -214,7 +214,7 @@ async function downloadBadge(member) {
   return "識別卡 PNG 已下載";
 }
 
-function DownloadButton({ member, compactText = false }) {
+function DownloadButton({ member, compactText = false, label = "" }) {
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const run = async () => {
@@ -223,7 +223,7 @@ function DownloadButton({ member, compactText = false }) {
     catch (error) { if (error.name !== "AbortError") setStatus(`下載失敗：${error.message}`); }
     finally { setBusy(false); }
   };
-  return <><button className="secondary-action" disabled={busy} onClick={run}><DownloadSimple /> {busy ? "正在產生圖片…" : compactText ? "下載識別卡" : "下載識別卡 PNG"}</button>{status && <p className="download-status" role="status">{status}</p>}</>;
+  return <><button className="secondary-action" disabled={busy} onClick={run}><DownloadSimple /> {busy ? "正在產生圖片…" : label || (compactText ? "下載識別卡" : "下載識別卡 PNG")}</button>{status && <p className="download-status" role="status">{status}</p>}</>;
 }
 
 function ToggleRow({ value, onChange, title, body }) {
@@ -257,16 +257,48 @@ function LiveCountdown({ endsAt, onDone }) {
   return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
+const CELEBRATION_PIECES = [
+  ["-148px", "410px", "420deg", "#eaff00", "0ms"], ["-116px", "350px", "-310deg", "#ff2db2", "30ms"],
+  ["-82px", "455px", "540deg", "#00d8ff", "60ms"], ["-48px", "320px", "-440deg", "#a955ff", "15ms"],
+  ["-18px", "430px", "380deg", "#ff5724", "75ms"], ["22px", "370px", "-520deg", "#eaff00", "35ms"],
+  ["55px", "465px", "460deg", "#ff2db2", "90ms"], ["88px", "335px", "-360deg", "#00d8ff", "10ms"],
+  ["122px", "425px", "580deg", "#a955ff", "55ms"], ["152px", "365px", "-460deg", "#ff5724", "85ms"],
+  ["-170px", "280px", "330deg", "#00d8ff", "110ms"], ["170px", "295px", "-390deg", "#eaff00", "120ms"],
+  ["-132px", "505px", "620deg", "#a955ff", "100ms"], ["135px", "510px", "-610deg", "#ff2db2", "105ms"],
+  ["-65px", "535px", "470deg", "#ff5724", "125ms"], ["70px", "550px", "-500deg", "#00d8ff", "130ms"],
+];
+
+function Celebration({ name }) {
+  return <div className="celebration-layer" role="status" aria-live="assertive">
+    <div className="celebration-glow" />
+    {CELEBRATION_PIECES.map(([x, y, spin, color, delay], index) => <i key={index} className="celebration-piece" style={{ "--x": x, "--y": y, "--spin": spin, "--piece": color, "--delay": delay }} />)}
+    <div className="celebration-message"><CheckCircle weight="fill" /><span>連結成功</span><strong>恭喜你和 {name}<br />成功見面！</strong><small>願這次相遇，成為下一個好點子的開始。</small></div>
+  </div>;
+}
+
 function MatchReveal({ match }) {
+  const [met, setMet] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
+  useEffect(() => { setMet(false); setCelebrating(false); }, [match?.id]);
+  useEffect(() => {
+    if (!celebrating) return undefined;
+    const timer = window.setTimeout(() => setCelebrating(false), 2600);
+    return () => window.clearTimeout(timer);
+  }, [celebrating]);
+  const celebrate = () => {
+    if (met) return;
+    setMet(true); setCelebrating(true);
+    navigator.vibrate?.([60, 40, 100]);
+  };
   if (!match) return <div className="match-reveal pending-match"><Sparkle weight="fill" /><h2>正在召喚你的夥伴…</h2><p>請保持頁面開啟，結果很快就會出現。</p></div>;
-  return <div className="match-reveal"><div className="match-title"><Sparkle weight="fill" /><span>召喚成功</span><Sparkle weight="fill" /></div><h2>去找到你的<br />自由夥伴</h2><BadgeCard member={match} compact /><p className="match-question">開場題：{ROLES[match.role]?.question}</p><button className="primary-action"><Check /> 我們已經見面</button><button className="text-action">我還沒找到 TA</button></div>;
+  return <div className="match-reveal">{celebrating && <Celebration name={match.nickname} />}<div className="match-title"><Sparkle weight="fill" /><span>召喚成功</span><Sparkle weight="fill" /></div><h2>去找到你的<br />自由夥伴</h2><BadgeCard member={match} compact /><p className="match-question">開場題：{ROLES[match.role]?.question}</p><DownloadButton member={match} label={`下載 ${match.nickname} 的識別名牌`} /><button className={`primary-action meet-action ${met ? "met" : ""}`} disabled={met} onClick={celebrate}>{met ? <CheckCircle weight="fill" /> : <Check />} {met ? "太好了，你們見面了！" : "我們已經見面"}</button><button className="text-action">我還沒找到 TA</button></div>;
 }
 
 function CheckedIn({ member, event, match, onEdit }) {
   return <section className="mobile-screen checked-screen"><header className="checked-header"><span className="mini-mark">FW</span><span className="live-dot">ONLINE</span></header>
     <div className="mobile-content checked-content"><div className="success-stamp"><CheckCircle weight="fill" /><span>報到完成・已同步大屏與媒合名單</span></div><BadgeCard member={member} />
       {event.mode === "matched" ? <MatchReveal match={match} /> : event.mode === "countdown" ? <div className="summon-alert"><span>相遇儀式即將開始</span><strong><LiveCountdown endsAt={event.endsAt} /></strong><p>請保持頁面開啟，配對即將揭曉。</p></div> : <div className="status-card"><Broadcast /><div><strong>{member.wall ? "你已點亮交誼廳" : "報到資料已完成保存"}</strong><span>{member.match ? "你已進入下一輪媒合候選名單。" : "你目前沒有參與隨機媒合。"}</span></div></div>}
-      <div className="checked-actions"><DownloadButton member={member} compactText /><button className="text-action" onClick={onEdit}>編輯資料</button></div>
+      <div className="checked-actions">{event.mode !== "matched" && <DownloadButton member={member} compactText />}<button className="text-action" onClick={onEdit}>編輯資料</button></div>
     </div>
   </section>;
 }

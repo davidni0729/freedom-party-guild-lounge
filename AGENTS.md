@@ -17,3 +17,5 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - The QR code is public check-in only. Lounge and admin surfaces require a private host credential and must never be exposed through public navigation or the attendee QR code.
 - D1 is the authoritative participant, event, and matching store; R2 stores participant photos. localStorage may only keep the current attendee's opaque id/token identity.
 - Production and seeded demo data must start empty. Any deployment verification records must be removed before handoff.
+- On the mobile match result, confirming「我們已經見面」must trigger a short congratulatory celebration with a reduced-motion fallback and leave a clear completed state.
+- Once a match is revealed, the visible badge download action must download the matched person's badge, not the current attendee's own badge.
