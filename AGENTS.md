@@ -14,3 +14,6 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Visual direction: use the supplied Freedom Party A1 poster for the acid yellow, cyan, hot pink, black, grid-based visual system; use the three supplied guest-badge images for metallic, graffiti, industrial-cutout identity cards.
 - Core surfaces: responsive mobile check-in, public lounge display, and host control dashboard sharing one event state.
 - Four roles: 機甲師（工程師）、幻術師（設計師）、召喚師（媒合者）、城主（金主／老闆）。
+- The QR code is public check-in only. Lounge and admin surfaces require a private host credential and must never be exposed through public navigation or the attendee QR code.
+- D1 is the authoritative participant, event, and matching store; R2 stores participant photos. localStorage may only keep the current attendee's opaque id/token identity.
+- Production and seeded demo data must start empty. Any deployment verification records must be removed before handoff.

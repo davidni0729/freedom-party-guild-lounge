@@ -4,7 +4,7 @@
 
 ## 線上體驗
 
-[開啟巫師公會交誼廳](https://freedom-party-guild-lounge.cybermonk.chatgpt.site)
+[開啟手機報到頁](https://freedom-party-guild-lounge.cybermonk.chatgpt.site/?surface=checkin)
 
 參與者掃描大屏 QR Code 後，可以選擇公會角色、建立專屬識別卡並選擇是否登上大屏。主持人啟動相遇儀式後，所有仍在線且願意參與的人會收到一位現場可以認識的新夥伴。
 
@@ -22,13 +22,17 @@
 - 公開大屏成員牆與報到 QR Code
 - 主持人控制台與媒合倒數
 - 手機私密顯示配對結果與破冰題目
-- 三個介面透過瀏覽器狀態同步
+- 跨裝置同步報到名單、大屏與媒合狀態
+- D1 資料庫與 R2 照片儲存
+- 工作人員介面使用私密憑證保護
 
 ## 介面
 
-- `?surface=checkin`：手機報到
-- `?surface=lounge`：交誼廳大屏
-- `?surface=admin`：主持人控制台
+- `?surface=checkin`：公開手機報到；大屏 QR Code 只會導向此頁
+- `?surface=lounge`：交誼廳大屏，需工作人員憑證
+- `?surface=admin`：主持人控制台，需工作人員憑證
+
+工作人員連結等同操作密碼，不應放進公開文件、QR Code 或社群貼文。
 
 ## 本機開發
 
@@ -46,4 +50,4 @@ npm run test:sites
 
 ## 技術備註
 
-目前版本為可操作 MVP，資料暫存在瀏覽器。若要支援多台手機跨裝置即時同步，需要在下一階段接上資料庫、物件儲存與即時通訊服務。
+正式站以 Cloudflare D1 儲存報到與媒合資料、R2 儲存照片；手機以短輪詢與 heartbeat 維持大屏和媒合名單同步。
