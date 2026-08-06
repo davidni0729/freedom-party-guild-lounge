@@ -291,7 +291,7 @@ function MatchReveal({ match }) {
     navigator.vibrate?.([60, 40, 100]);
   };
   if (!match) return <div className="match-reveal pending-match"><Sparkle weight="fill" /><h2>正在召喚你的夥伴…</h2><p>請保持頁面開啟，結果很快就會出現。</p></div>;
-  return <div className="match-reveal">{celebrating && <Celebration name={match.nickname} />}<div className="match-title"><Sparkle weight="fill" /><span>召喚成功</span><Sparkle weight="fill" /></div><h2>去找到你的<br />自由夥伴</h2><BadgeCard member={match} compact /><p className="match-question">開場題：{ROLES[match.role]?.question}</p><DownloadButton member={match} label={`下載 ${match.nickname} 的識別名牌`} /><button className={`primary-action meet-action ${met ? "met" : ""}`} disabled={met} onClick={celebrate}>{met ? <CheckCircle weight="fill" /> : <Check />} {met ? "太好了，你們見面了！" : "我們已經見面"}</button><button className="text-action">我還沒找到 TA</button></div>;
+  return <div className="match-reveal">{celebrating && <Celebration name={match.nickname} />}<div className="match-title"><Sparkle weight="fill" /><span>召喚成功</span><Sparkle weight="fill" /></div><h2>去找到你的<br />自由夥伴</h2><BadgeCard member={match} compact /><p className="match-question">開場題：{ROLES[match.role]?.question}</p><DownloadButton member={match} label="下載對方的識別名牌" /><button className={`primary-action meet-action ${met ? "met" : ""}`} disabled={met} onClick={celebrate}>{met ? <CheckCircle weight="fill" /> : <Check />} {met ? "太好了，你們見面了！" : "我們已經見面"}</button><button className="text-action">我還沒找到 TA</button></div>;
 }
 
 function CheckedIn({ member, event, match, onEdit }) {
